@@ -1,0 +1,7 @@
+# SPDX-License-Identifier: Apache-2.0
+
+description: Sensirion SEN5x (SEN50/SEN54/SEN55) environmental sensor node
+
+compatible: "sensirion,sen5x"
+
+include: [sensor-device.yaml, i2c-device.yaml]

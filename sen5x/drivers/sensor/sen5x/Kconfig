@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+
+config SEN5X
+	bool "Sensirion SEN5x environmental sensor"
+	default y
+	depends on DT_HAS_SENSIRION_SEN5X_ENABLED
+	depends on SENSOR
+	select I2C
+	select CRC
+	help
+	  Enable driver for Sensirion SEN50/SEN54/SEN55.

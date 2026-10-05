@@ -1,0 +1,16 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#ifndef ZEPHYR_INCLUDE_DRIVERS_SENSOR_SEN5X_H_
+#define ZEPHYR_INCLUDE_DRIVERS_SENSOR_SEN5X_H_
+
+#include <zephyr/drivers/sensor.h>
+
+enum sensor_channel_sen5x {
+  SENSOR_CHAN_SEN5X_PM_4_0 = SENSOR_CHAN_PRIV_START,
+  SENSOR_CHAN_SEN5X_VOC_INDEX,
+  SENSOR_CHAN_SEN5X_NOX_INDEX,
+};
+
+#endif /* ZEPHYR_INCLUDE_DRIVERS_SENSOR_SEN5X_H_ */
