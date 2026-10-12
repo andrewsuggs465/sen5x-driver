@@ -1,4 +1,4 @@
-/*
+/*`
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -52,13 +52,20 @@ static int sen5x_init(const struct device *dev)
 	return 0;
 }
 
-#define SEN5X_DEFINE(inst)                                                                         \
-	static struct sen5x_data sen5x_data_##inst;                                                \
-	static const struct sen5x_config sen5x_config_##inst = {                                   \
-		.bus = I2C_DT_SPEC_INST_GET(inst),                                                 \
-	};                                                                                         \
-	SENSOR_DEVICE_DT_INST_DEFINE(inst, sen5x_init, NULL, &sen5x_data_##inst,                   \
-				     &sen5x_config_##inst, POST_KERNEL,                            \
-				     CONFIG_SENSOR_INIT_PRIORITY, &sen5x_api);
+#define SEN5X_DEFINE(inst)                                                            \
+	static struct sen5x_data sen5x_data_##inst;                                   \
+	/* ROM config -- bus device plus target address*/			      \
+	static const struct sen5x_config sen5x_config_##inst = {                      \
+		.bus = I2C_DT_SPEC_INST_GET(inst),                                    \
+	};                                                                            \
+	/* Macro for SENSOR_DEVICE_DT_DEFINE(DT_DRV_INST(inst), ... ) */	      \		
+	SENSOR_DEVICE_DT_INST_DEFINE(inst,                          /*node_id*/       \
+				     sen5x_init,                    /*init_fn*/       \
+				     NULL,                          /*pm_device*/     \
+				     &sen5x_data_##inst,            /*data_ptr*/      \
+				     &sen5x_config_##inst,          /*cfg_ptr*/       \
+				     POST_KERNEL,                   /*level*/	      \
+				     CONFIG_SENSOR_INIT_PRIORITY,   /*Priority*/      \
+				     &sen5x_api);                   /*api_ptr*/                         
 
 DT_INST_FOREACH_STATUS_OKAY(SEN5X_DEFINE)
