@@ -23,8 +23,41 @@ struct sen5x_data {
 
 static int sen5x_sample_fetch(const struct device *dev, enum sensor_channel chan)
 {
-	/* TODO */
-	return -ENOTSUP;
+	const struct sen5x_config *cfg = dev->config;
+	struct sen5x_data *data = dev->data;
+	uint8_t cmd[2] = { 0x03, 0xC4 }; /*Read measured values*/
+	uint8_t buf[24]; /* 8 x (MSB, LSB, CRC) */
+	int ret;
+
+	ret = i2c_write_dt(&cfg->bus, cmd, sizeof(cmd));
+	if (ret < 0){
+		LOG_ERR("Read command failed (%d)", ret);
+		return ret;
+	}
+
+	k_msleep(20);
+
+	ret = i2c_read_dt(&cfg->bus, buf, sizeof(buf));
+	if (ret < 0){
+		LOG_ERR("Read command failed (%d)", ret);
+		return ret;
+	}
+
+	for (int i = 0; i < 8; i++) {
+		/* Byte 0: PM1.0, 3: PM2.5, 6: PM4.0,
+		9: PM10, 12: %RH, 15: Temp, 18: VOC, 21: NOx*/
+		uint8_t *word = &buf[i * 3];
+
+		if(crc8(word, 2, 0x31, 0xFF, false) != word[2]) {
+			LOG_WRN("CRC mismatch on word %d", i);
+			return -EIO;
+		}
+		data->raw[i] = sys_get_be16(word);
+	}
+	LOG_DBG("raw: %04x %04x %04x %04x %04x %04x %04x %04x",
+		data->raw[0], data->raw[1], data->raw[2], data->raw[3],
+		data->raw[4], data->raw[5], data->raw[6], data->raw[7]);
+	return 0;
 }
 
 static int sen5x_channel_get(const struct device *dev, enum sensor_channel chan,
