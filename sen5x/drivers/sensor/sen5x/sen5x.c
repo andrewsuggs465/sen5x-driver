@@ -1,4 +1,4 @@
-/*`
+/*
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -41,7 +41,7 @@ static int sen5x_sample_fetch(const struct device *dev, enum sensor_channel chan
 
 	ret = i2c_read_dt(&cfg->bus, buf, sizeof(buf));
 	if (ret < 0){
-		LOG_ERR("Read command failed (%d)", ret);
+		LOG_ERR("Read failed (%d)", ret);
 		return ret;
 	}
 
@@ -126,7 +126,16 @@ static int sen5x_init(const struct device *dev)
 		return -ENODEV;
 	}
 
-	/* TODO: send start measurement 0x0021 */
+	/* Send start measurement: 0x0021 */
+	uint8_t cmd[2] = {0x00, 0x21};
+	int ret;
+
+	ret = i2c_write_dt(&cfg->bus, cmd, sizeof(cmd));
+	if(ret < 0){
+		LOG_ERR("Start Measurement failed! (%d)", ret);
+		return ret;
+	}
+
 	return 0;
 }
 

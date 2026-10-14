@@ -1,7 +1,7 @@
 &arduino_i2c {
 	clock-frequency = <100000>;
 
-	sen55: sen55@69 {
+	sen54: sen54@69 {
 		compatible = "sensirion,sen5x";
 		reg = <0x69>;
 	};
