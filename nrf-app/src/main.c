@@ -19,6 +19,7 @@ static const struct {
 	{ SENSOR_CHAN_SEN5X_VOC_INDEX, "VOC",   ""      },
 	{ SENSOR_CHAN_SEN5X_NOX_INDEX, "NOx",   ""      },
 };
+
 int main(void)
 {
         const struct device *dev = DEVICE_DT_GET(DT_NODELABEL(sen54));
@@ -26,18 +27,18 @@ int main(void)
         int ret;
 
         if(!device_is_ready(dev)){
-            printk("SEN5x not ready\n");
+            LOG_WRN("SEN5x not ready\n");
             return 0;
         }
 
-        printk("SEN5x ready: %s\n", dev->name);
+        LOG_INF("SEN5x ready: %s\n", dev->name);
 
         while(1) {
             k_sleep(K_SECONDS(1));
 
             ret = sensor_sample_fetch(dev);
             if (ret) {
-                printk("fetch failed (%d)", ret);
+                LOG_WRN("fetch failed (%d)\n", ret);
                 continue;
             }
             
